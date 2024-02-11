@@ -8,7 +8,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -16,30 +15,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.whatsapp.whatsappsockethandler.entity.User;
 import com.whatsapp.whatsappsockethandler.security.SecurityConstants;
-import com.whatsapp.whatsappsockethandler.security.manager.CustomAuthenticationManager;
 
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
-
-    private CustomAuthenticationManager authenticationManager;
-
-    @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
-            throws AuthenticationException {
-        try {
-            User user = new ObjectMapper().readValue(request.getInputStream(), User.class);
-            Authentication authentication = new UsernamePasswordAuthenticationToken(user.getUsername(),
-                    user.getPassword());
-            return authenticationManager.authenticate(authentication);
-        } catch (IOException e) {
-            throw new RuntimeException();
-        }
-    }
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
