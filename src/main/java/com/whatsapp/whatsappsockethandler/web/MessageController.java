@@ -1,6 +1,8 @@
 package com.whatsapp.whatsappsockethandler.web;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,9 +27,12 @@ public class MessageController {
     private final NotificationMessagingTemplate notificationMessagingTemplate;
 
     @PostMapping("/sender/{senderId}/receiver/{receiverId}")
-    public ResponseEntity<String> sendMessage() {
+    public ResponseEntity<String> sendMessage(@RequestBody String str) {
         Message<String> message = new GenericMessage<>("message");
-        notificationMessagingTemplate.send("message-received-dev.fifo", message);
-        return new ResponseEntity<>("CREATED", HttpStatus.CREATED);
+        Map<String, Object> headers = new HashMap<>();
+        headers.put("message-group-id", "messageGroupId");
+        headers.put("message-deduplication-id", str);
+        notificationMessagingTemplate.convertAndSend("message-received-dev.fifo", message, headers);
+        return new ResponseEntity<>(str, HttpStatus.CREATED);
     }
 }
