@@ -1,47 +1,48 @@
 package com.whatsapp.whatsappsockethandler.service;
 
-import java.util.List;
-import java.util.Optional;
-
-import com.whatsapp.whatsappsockethandler.entity.Chat;
-import com.whatsapp.whatsappsockethandler.entity.Message;
-import com.whatsapp.whatsappsockethandler.entity.User;
-import com.whatsapp.whatsappsockethandler.repository.ChatRepository;
-import com.whatsapp.whatsappsockethandler.repository.MessageRepository;
-import com.whatsapp.whatsappsockethandler.repository.UserRepository;
+import com.whatsapp.whatsappsockethandler.dto.BaseMessage;
+import com.whatsapp.whatsappsockethandler.dto.QueueMessage;
+import com.whatsapp.whatsappsockethandler.dto.UserMessage;
+import com.whatsapp.whatsappsockethandler.producer.MessageProducer;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
+
+import org.springframework.boot.autoconfigure.security.SecurityProperties.User;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @AllArgsConstructor
 @Service
 public class MessageServiceImpl implements MessageService {
+    private final MessageProducer messageProducer;
 
-    MessageRepository messageRepository;
-    UserRepository userRepository;
-    ChatRepository chatRepository;
-
-    ChatService chatService;
-
-    @Override
-    public List<Message> getMessages(Long senderId, Long receiverId) {
-        Chat chat = chatService.getUnwrappedChat(senderId, receiverId);
-        return chat.getMessages();
+    public String token() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println("---" + authentication.getName());
+        return "s";
     }
 
     @Override
-    public Message addMessageToChat(Message message, Long senderId, Long receiverId) {
-        @SuppressWarnings("null")
-        Optional<User> sender = userRepository.findById(senderId);
-        User unwrappedSender = UserServiceImpl.unwrapUser(sender, senderId);
-        @SuppressWarnings("null")
-        Optional<User> receiver = userRepository.findById(receiverId);
-        User unwrappedReceiver = UserServiceImpl.unwrapUser(receiver, receiverId);
-        Optional<Chat> chat = chatService.getChat(senderId, receiverId);
-        message.setSender(unwrappedSender);
-        message.setReceiver(unwrappedReceiver);
-        chatService.addMessageToChat(chat, unwrappedSender, unwrappedReceiver, message);
-        return message;
+    public QueueMessage convertUserMessageToQueueMessage(UserMessage userMessage) {
+        token();
+        BaseMessage baseMessage = (BaseMessage) userMessage;
+        QueueMessage queueMessage = (QueueMessage) baseMessage;
+        queueMessage.setSender(1L);
+        return queueMessage;
+    }
+
+    @Override
+    public QueueMessage handleMessage(UserMessage userMessage) {
+        QueueMessage queueMessage = convertUserMessageToQueueMessage(userMessage);
+        messageProducer.sendMessage(queueMessage);
+        return queueMessage;
     }
 }

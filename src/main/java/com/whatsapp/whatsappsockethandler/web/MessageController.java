@@ -8,20 +8,23 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.whatsapp.whatsappsockethandler.dto.QueueMessage;
+import com.whatsapp.whatsappsockethandler.dto.UserMessage;
 import com.whatsapp.whatsappsockethandler.producer.MessageProducer;
+import com.whatsapp.whatsappsockethandler.service.MessageService;
 
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @RestController
 @RequestMapping("/message")
 public class MessageController {
-    private MessageProducer messageProducer;
+    private final MessageService messageService;
 
-    @PostMapping("/sender/{senderId}/receiver/{receiverId}")
-    public ResponseEntity<String> sendMessage(@RequestBody String str) {
-        messageProducer.sendMessage(str);
-        return new ResponseEntity<>(str, HttpStatus.CREATED);
+    @PostMapping("/chat/{chatId}")
+    public ResponseEntity<QueueMessage> sendMessage(@PathVariable Long chatId, @RequestBody UserMessage userMessage) {
+        userMessage.setChatId(chatId);
+        QueueMessage queueMessage = messageService.handleMessage(userMessage);
+        return new ResponseEntity<>(queueMessage, HttpStatus.CREATED);
     }
 }

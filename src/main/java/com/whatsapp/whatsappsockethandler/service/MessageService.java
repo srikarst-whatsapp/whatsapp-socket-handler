@@ -1,11 +1,13 @@
 package com.whatsapp.whatsappsockethandler.service;
 
-import java.util.List;
-
-import com.whatsapp.whatsappsockethandler.entity.Message;
+import com.whatsapp.whatsappsockethandler.dto.BaseMessage;
+import com.whatsapp.whatsappsockethandler.dto.QueueMessage;
+import com.whatsapp.whatsappsockethandler.dto.UserMessage;
 
 public interface MessageService {
-    List<Message> getMessages(Long senderId, Long receiverId);
+    QueueMessage convertUserMessageToQueueMessage(UserMessage userMessage);
 
-    Message addMessageToChat(Message message, Long senderId, Long receiverId);
+    QueueMessage handleMessage(UserMessage userMessage);
+
+    String token();
 }
