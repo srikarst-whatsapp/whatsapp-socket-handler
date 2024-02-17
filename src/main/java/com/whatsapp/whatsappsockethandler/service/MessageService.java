@@ -5,7 +5,7 @@ import com.whatsapp.whatsappsockethandler.dto.QueueMessage;
 import com.whatsapp.whatsappsockethandler.dto.UserMessage;
 
 public interface MessageService {
-    QueueMessage convertUserMessageToQueueMessage(UserMessage userMessage);
+    QueueMessage convertUserMessageToQueueMessage(BaseMessage userMessage);
 
     QueueMessage handleMessage(UserMessage userMessage);
 

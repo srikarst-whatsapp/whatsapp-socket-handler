@@ -1,7 +1,5 @@
 package com.whatsapp.whatsappsockethandler.dto;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotBlank;
 
 import lombok.*;
@@ -10,12 +8,16 @@ import lombok.*;
 @Setter
 @RequiredArgsConstructor
 @NoArgsConstructor
-@Entity
 public class BaseMessage {
 
-    @Id
+    BaseMessage(BaseMessage baseMessage) {
+        this.id = baseMessage.getId();
+        this.chatId = baseMessage.chatId;
+        this.body = baseMessage.body;
+    }
+
     @NonNull
-    private Long id;
+    private String id;
 
     @NonNull
     private Long chatId;

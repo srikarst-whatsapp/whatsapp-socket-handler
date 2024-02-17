@@ -26,15 +26,13 @@ public class MessageServiceImpl implements MessageService {
 
     public String token() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println("---" + authentication.getName());
         return "s";
     }
 
     @Override
-    public QueueMessage convertUserMessageToQueueMessage(UserMessage userMessage) {
+    public QueueMessage convertUserMessageToQueueMessage(BaseMessage baseMessage) {
         token();
-        BaseMessage baseMessage = (BaseMessage) userMessage;
-        QueueMessage queueMessage = (QueueMessage) baseMessage;
+        QueueMessage queueMessage = new QueueMessage(baseMessage);
         queueMessage.setSender(1L);
         return queueMessage;
     }
