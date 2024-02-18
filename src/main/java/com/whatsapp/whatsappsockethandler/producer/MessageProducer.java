@@ -1,6 +1,5 @@
 package com.whatsapp.whatsappsockethandler.producer;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
@@ -23,7 +22,7 @@ public class MessageProducer {
         try {
             messageString = objectMapper.writeValueAsString(queueMessage);
             Message<String> message = MessageBuilder.withPayload(messageString)
-                    .setHeader("message-group-id", "messageGroupId")
+                    .setHeader("message-group-id", queueMessage.getChatId())
                     .setHeader("message-deduplication-id", queueMessage.getId())
                     .build();
             snsTemplate.send("message-received-dev.fifo", message);

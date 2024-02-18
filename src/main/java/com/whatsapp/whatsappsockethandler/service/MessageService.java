@@ -8,6 +8,4 @@ public interface MessageService {
     QueueMessage convertUserMessageToQueueMessage(BaseMessage userMessage);
 
     QueueMessage handleMessage(UserMessage userMessage);
-
-    String token();
 }

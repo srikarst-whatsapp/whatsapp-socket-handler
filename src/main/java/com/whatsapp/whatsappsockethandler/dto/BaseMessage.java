@@ -1,7 +1,6 @@
 package com.whatsapp.whatsappsockethandler.dto;
 
 import jakarta.validation.constraints.NotBlank;
-
 import lombok.*;
 
 @Getter
@@ -20,7 +19,7 @@ public class BaseMessage {
     private String id;
 
     @NonNull
-    private Long chatId;
+    private String chatId;
 
     @NotBlank(message = "Body cannot be blank")
     @NonNull

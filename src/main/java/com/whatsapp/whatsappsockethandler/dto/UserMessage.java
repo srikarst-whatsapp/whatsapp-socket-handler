@@ -9,6 +9,6 @@ import lombok.*;
 @RequiredArgsConstructor
 public class UserMessage extends BaseMessage {
 
-    private final String id = UUID.randomUUID().toString();;
+    private final String id = UUID.randomUUID().toString();
 
 }
